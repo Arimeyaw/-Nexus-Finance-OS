@@ -1,0 +1,205 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int              @id @default(autoincrement())
+  email           String           @unique
+  name            String?
+  password        String
+  phone           String?
+  avatarUrl       String?
+  bio             String?
+  timezone        String?
+  businesses      BusinessMember[]
+  ownedBusinesses Business[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model Business {
+  id        Int              @id @default(autoincrement())
+  name      String
+  slug      String           @unique
+  industry  String?
+  currency  String           @default("NGN")
+  ownerId   Int
+  owner     User             @relation(fields: [ownerId], references: [id])
+  members   BusinessMember[]
+  customers Customer[]
+  invoices  Invoice[]
+  payments  Payment[]
+  employees Employee[]
+  salaryStructures SalaryStructure[]
+  payrollBatches PayrollBatch[]
+  payrollPayments PayrollPayment[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
+model Employee {
+  id          Int      @id @default(autoincrement())
+  businessId  Int
+  firstName   String
+  lastName    String
+  email       String   @unique
+  phone       String?
+  role        String
+  hiredDate   DateTime @default(now())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+
+  business Business @relation(fields: [businessId], references: [id])
+  payrollPayments PayrollPayment[]
+}
+
+model SalaryStructure {
+  id              Int      @id @default(autoincrement())
+  businessId      Int
+  employeeId      Int
+  baseSalary      Float
+  bonus           Float   @default(0)
+  allowances      Float   @default(0)
+  deductions      Float   @default(0)
+  currency        String  @default("NGN")
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @default(now())
+
+  business Business @relation(fields: [businessId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
+}
+
+model PayrollBatch {
+  id             Int             @id @default(autoincrement())
+  businessId     Int
+  period         String
+  status         PayrollStatus   @default(PENDING)
+  totalAmount    Float
+  currency       String          @default("NGN")
+  disbursementId String?         @unique
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @default(now())
+
+  business Business @relation(fields: [businessId], references: [id])
+  payments PayrollPayment[]
+}
+
+model PayrollPayment {
+  id                Int             @id @default(autoincrement())
+  businessId        Int
+  payrollBatchId    Int
+  employeeId        Int
+  amount            Float
+  currency          String          @default("NGN")
+  status            PayrollStatus   @default(PENDING)
+  externalPaymentId String?         @unique
+  externalStatus    String?
+  failureReason     String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @default(now())
+
+  business Business @relation(fields: [businessId], references: [id])
+  payrollBatch PayrollBatch @relation(fields: [payrollBatchId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id])
+}
+
+enum PayrollStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model BusinessMember {
+  id         Int          @id @default(autoincrement())
+  userId     Int
+  businessId Int
+  role       BusinessRole @default(USER)
+  user       User         @relation(fields: [userId], references: [id])
+  business   Business     @relation(fields: [businessId], references: [id])
+  createdAt  DateTime     @default(now())
+
+  @@unique([userId, businessId])
+}
+
+model Customer {
+  id         Int      @id @default(autoincrement())
+  businessId Int
+  name       String
+  email      String   @unique
+  phone      String?
+  address    String?
+  currency   String   @default("NGN")
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  business Business  @relation(fields: [businessId], references: [id])
+  invoices Invoice[]
+  payments Payment[]
+}
+
+model Invoice {
+  id         Int           @id @default(autoincrement())
+  businessId Int
+  customerId Int
+  amount     Float
+  description String?
+  dueDate    DateTime
+  status     InvoiceStatus @default(DRAFT)
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+
+  business Business @relation(fields: [businessId], references: [id])
+  customer Customer @relation(fields: [customerId], references: [id])
+  payments Payment[]
+}
+
+model Payment {
+  id               Int           @id @default(autoincrement())
+  invoiceId        Int
+  businessId       Int
+  customerId       Int
+  amount           Float
+  currency         String
+  moolrePaymentId  String        @unique
+  paymentReference String        @unique
+  paymentLink      String
+  status           PaymentStatus @default(PENDING)
+  externalStatus   String?
+  expiresAt        DateTime?
+  paidAt           DateTime?
+  webhookPayload   Json?
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  invoice   Invoice  @relation(fields: [invoiceId], references: [id])
+  business  Business @relation(fields: [businessId], references: [id])
+  customer  Customer @relation(fields: [customerId], references: [id])
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELED
+  EXPIRED
+}
+
+enum BusinessRole {
+  OWNER
+  ADMIN
+  USER
+}

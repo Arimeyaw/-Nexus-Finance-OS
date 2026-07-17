@@ -1,0 +1,13 @@
+# Node
+node_modules/
+.pnpm-store/
+.pnp.*
+.DS_Store
+.env*
+coverage/
+**/.next/
+**/dist/
+**/build/
+**/out/
+**/*.log
+.vscode/

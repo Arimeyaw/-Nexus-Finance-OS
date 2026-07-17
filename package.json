@@ -1,0 +1,17 @@
+{
+  "name": "nexus-finance-os",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@8.3.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --parallel --stream dev",
+    "build": "pnpm --recursive build",
+    "lint": "pnpm --recursive lint",
+    "format": "pnpm exec prettier --write .",
+    "test": "pnpm --recursive test"
+  }
+}
