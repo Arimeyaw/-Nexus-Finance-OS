@@ -11,3 +11,4 @@ coverage/
 **/out/
 **/*.log
 .vscode/
+apps/backend/*.tsbuildinfo
