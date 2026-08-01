@@ -28,15 +28,24 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-slate-950 text-white px-6 py-10 sm:px-10">
-      <div className="mx-auto max-w-6xl space-y-10">
-        <section className="rounded-[2rem] border border-white/10 bg-slate-900/70 p-10 shadow-soft">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <main className="min-h-screen px-6 py-10 text-white sm:px-10">
+      <div className="mx-auto max-w-7xl space-y-8">
+        <section className="overflow-hidden rounded-[2rem] border border-cyan-400/20 bg-slate-900/70 p-8 shadow-2xl backdrop-blur-xl sm:p-10">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <h1 className="text-3xl font-semibold">Dashboard</h1>
-              <p className="mt-2 text-slate-400">
-                An overview of your tenant workspace and recent activity.
+              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-cyan-300">
+                Executive cockpit
               </p>
+              <h1 className="mt-3 text-3xl font-semibold sm:text-4xl">
+                Finance overview for your African SME
+              </h1>
+              <p className="mt-3 max-w-2xl text-slate-400">
+                Track your operating rhythm, plan ahead, and stay in control of receivables,
+                expenses, and payroll.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-slate-300">
+              Currency default: <span className="font-semibold text-white">GHS</span>
             </div>
           </div>
         </section>
@@ -51,14 +60,15 @@ export default function DashboardPage() {
           </section>
         ) : (
           <>
-            <section className="grid gap-6 md:grid-cols-3">
+            <section className="grid gap-6 lg:grid-cols-3">
               <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-6">
-                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Businesses</p>
+                <p className="text-sm uppercase tracking-[0.24em] text-slate-500">
+                  Active businesses
+                </p>
                 <p className="mt-4 text-4xl font-semibold text-white">
                   {dashboard.summary.activeBusinesses}
                 </p>
               </div>
-
               <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-6">
                 <p className="text-sm uppercase tracking-[0.24em] text-slate-500">
                   Recent activity
@@ -67,23 +77,24 @@ export default function DashboardPage() {
                   {dashboard.businessList.length}
                 </p>
               </div>
-
               <div className="rounded-[2rem] border border-white/10 bg-slate-950/80 p-6">
                 <p className="text-sm uppercase tracking-[0.24em] text-slate-500">Welcome back</p>
-                <p className="mt-4 text-4xl font-semibold text-white">
+                <p className="mt-4 text-2xl font-semibold text-white">
                   {dashboard.user?.name || dashboard.user?.email}
                 </p>
               </div>
             </section>
 
-            <section className="rounded-[2rem] border border-white/10 bg-slate-900/70 p-10 shadow-soft">
+            <section className="rounded-[2rem] border border-white/10 bg-slate-900/70 p-8 shadow-soft sm:p-10">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-2xl font-semibold">Recent businesses</h2>
+                <h2 className="text-2xl font-semibold">Latest businesses</h2>
                 <p className="text-sm text-slate-400">Updated most recently first</p>
               </div>
               <div className="mt-6 grid gap-4">
                 {dashboard.businessList.length === 0 ? (
-                  <p className="text-slate-400">No businesses found. Add one from onboarding.</p>
+                  <p className="text-slate-400">
+                    No businesses yet. Create one to start tracking finances.
+                  </p>
                 ) : (
                   dashboard.businessList.map((business: any) => (
                     <div
@@ -97,9 +108,14 @@ export default function DashboardPage() {
                             {business.industry || 'Industry not set'}
                           </p>
                         </div>
-                        <span className="rounded-full bg-slate-800 px-3 py-1 text-xs uppercase tracking-[0.18em] text-slate-400">
-                          {business.slug}
-                        </span>
+                        <div className="flex items-center gap-3">
+                          <span className="rounded-full bg-cyan-500/10 px-3 py-1 text-xs uppercase tracking-[0.18em] text-cyan-300">
+                            {business.currency || 'GHS'}
+                          </span>
+                          <span className="rounded-full bg-slate-800 px-3 py-1 text-xs uppercase tracking-[0.18em] text-slate-400">
+                            {business.slug}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   ))

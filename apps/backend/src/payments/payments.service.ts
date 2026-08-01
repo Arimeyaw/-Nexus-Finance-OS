@@ -48,7 +48,7 @@ export class PaymentsService {
         moolrePaymentId: paymentLink.paymentId,
         paymentReference: paymentReference,
         paymentLink: paymentLink.paymentUrl,
-        status: 'PENDING',
+        status: 'PENDING' as const,
         expiresAt: paymentLink.expiresAt ? new Date(paymentLink.expiresAt) : undefined,
       },
     });
@@ -173,7 +173,9 @@ export class PaymentsService {
     };
   }
 
-  private mapMoolreStatus(status: string) {
+  private mapMoolreStatus(
+    status: string,
+  ): 'PENDING' | 'COMPLETED' | 'FAILED' | 'CANCELED' | 'EXPIRED' {
     const normalized = status.toUpperCase();
     switch (normalized) {
       case 'COMPLETED':

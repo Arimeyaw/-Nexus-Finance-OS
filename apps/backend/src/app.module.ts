@@ -9,6 +9,9 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { CustomersModule } from './customers/customers.module';
 import { InvoicesModule } from './invoices/invoices.module';
 import { PaymentsModule } from './payments/payments.module';
+import { PayrollModule } from './payroll/payroll.module';
+import { ExpensesModule } from './expenses/expenses.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -21,6 +24,9 @@ import { PaymentsModule } from './payments/payments.module';
     CustomersModule,
     InvoicesModule,
     PaymentsModule,
+    PayrollModule,
+    ExpensesModule,
+    ReportsModule,
     HealthModule,
   ],
   controllers: [],
